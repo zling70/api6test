@@ -12,7 +12,8 @@ namespace api6test.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]//似乎没有起到效果2021-08-27
         public DateTime billdate {get;set;}     //单据日期
-        public string? customer {get;set;}       //客户名称
+        //public String customer {get;set;}       //客户编号关联的客户对象
+        public Customer cust {get;set;}
         public string? customeraddress {get;set;}      //客户地址
         //在简单案例后，扩展为一个复杂订单页面的crud，增加新的属性
         public string? billstatus {get;set;}//varchar(10),--单据审核状况
@@ -24,6 +25,6 @@ namespace api6test.Models
         public string?     priceofoftax {get;set;}//varchar(20),--单价是否含税
         public string?     salesid {get;set;}//varchar(20),--业务员
         public string?     departid {get;set;}//varchar(20) --部门(编号)
-        public ICollection<OrderItems>? details {get;set;} 
+        public ICollection<OrderItems>? details {get;set;}
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using api6test.BLL;
@@ -30,6 +31,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddTransient<StudentService>();//注册业务逻辑层
 builder.Services.AddScoped<OrderbillService>();//注册业务逻辑层,
+
 
 var app = builder.Build();
 

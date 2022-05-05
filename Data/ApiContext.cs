@@ -15,8 +15,10 @@ using api6test.Models;
         public DbSet<api6test.Models.Student> Student { get; set; } //承担模型注册
         //日志工厂创建，控制台的输出
         public static readonly ILoggerFactory loggerFactory= LoggerFactory.Create(builder =>{builder.AddConsole();});// new LoggerFactory(new [] {new ConsoleLoggerProvider((_, __) => true,true)});
+        //注册实体
         public DbSet<api6test.Models.Orderbill> Orderbill { get; set; }
         public DbSet<api6test.Models.OrderItems> OrderItems { get; set; }
+        public DbSet<api6test.Models.Customer> Customer { get; set; }
        
         protected override void OnModelCreating (ModelBuilder builder){
             base.OnModelCreating(builder);//调用父类构造方法，
