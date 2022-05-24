@@ -21,10 +21,10 @@ namespace api6test.BLL
         //简单单据的查询操作，对应前端页面Orderbill.html
         public async Task<ActionResult<IEnumerable<Orderbill>>> getAll()
         {
-            List<OrderItems> tms = await _context.OrderItems.ToListAsync();
+            List<OrderItems> tms = await _context.OrderItems!.ToListAsync();
             //测试中一直不能查询到导航属性中的子数据，无意中写了上面一行代码，在测试中返回值就可以得到导航数据了，这是什么原因？
             //应该有更优雅的实现方式
-            List<Orderbill> ods = await _context.Orderbill.ToListAsync();
+            List<Orderbill> ods = await _context.Orderbill!.ToListAsync();
             return ods;
         }
 
@@ -32,12 +32,12 @@ namespace api6test.BLL
         public async Task<int> DelOrder(string billno)
         {
             var status = 0;
-            Orderbill? od = await _context.Orderbill.FindAsync(billno);
-            _context.Entry(od).Collection(b => b.details).Load(); //加载明细
+            Orderbill? od = await _context.Orderbill!.FindAsync(billno);
+            _context.Entry(od!).Collection(b => b.details!).Load(); //加载明细
             //删除明细，代码删除比配置级联删除，个人认为有优势
-            foreach (OrderItems itm in od.details)
+            foreach (OrderItems itm in od!.details!)
             {
-                _context.OrderItems.Remove(itm);
+                _context.OrderItems!.Remove(itm);
             }
             _context.Remove(od);
             status = await _context.SaveChangesAsync();
@@ -50,16 +50,16 @@ namespace api6test.BLL
             var status = 0;
             //所传过来的参数orderbill对象，与数据库的关系比较复杂：订单编号在实体表中不存在，将执行新增操作，如果存在，订单主表执行新增操作，明细表
             //中的操作包含：1）删除了某一个明细行，2）新增了若干行，3）修改了某个订单明细的字段，所以，总结就是：删除所有明细，将新的明细重新添加一遍。
-            Orderbill? rsbill = await _context.Orderbill.FindAsync(orderbill.billno); //经测试，不会查出关联明细数据
-            var customer = await _context.Customer.FindAsync(orderbill.cust.customer);//找到关联的客户对象
+            Orderbill? rsbill = await _context.Orderbill!.FindAsync(orderbill.billno); //经测试，不会查出关联明细数据
+            var customer = await _context.Customer!.FindAsync(orderbill.cust!.customer);//找到关联的客户对象
             if (rsbill != null)
             {
                 //执行更新操作
                 Console.WriteLine("执行更新");
                 //先执行明细的删除操作，
-                _context.Entry(rsbill).Collection(b => b.details).Load(); //加载明细
+                _context.Entry(rsbill).Collection(b => b.details!).Load(); //加载明细
 
-                foreach (OrderItems oit in rsbill.details)
+                foreach (OrderItems oit in rsbill.details!)
                 {
                     _context.Remove(oit); //删除明细
                 }
@@ -110,11 +110,11 @@ namespace api6test.BLL
         //查找最后一条数据，但，是通过查找所有以后取最后一条进行返回，意图是测试熟悉
         public async Task<Orderbill> GetEnd()
         {
-            string odnum = await _context.Orderbill.MaxAsync(o => o.billno);
-            var od = _context.Orderbill.FindAsync(odnum);
-            _context.Entry(od.Result).Reference("cust").Load(); //查询主单时，加载关联的外键表数据
-            _context.Entry(od.Result).Collection(b => b.details).Load(); //查询主单时，加载关联的外键表集合
-            return od.Result;
+            string odnum = await _context.Orderbill!.MaxAsync(o => o.billno!);
+            var od = _context.Orderbill!.FindAsync(odnum);
+            _context!.Entry(od.Result!).Reference("cust").Load(); //查询主单时，加载关联的外键表数据
+            _context!.Entry(od.Result!).Collection(b => b.details!).Load(); //查询主单时，加载关联的外键表集合
+            return od.Result!;
         }
 
         public async Task<Orderbill> GetOrder(string billno, int i = 1) //目的是想找到某一个单号的前一条/或后一条最近的记录，
@@ -129,33 +129,33 @@ namespace api6test.BLL
             string bno = "";
             if (i >= 1)
             {
-                bno = await _context.Orderbill
+                bno = await _context.Orderbill!
                     .FromSqlInterpolated($"SELECT * FROM dbo.orderbill where billno<{billno}")
                     .AsNoTracking()
-                    .MaxAsync(p => p.billno);
+                    .MaxAsync(p => p.billno!);
                 //var bills = _context.Orderbill.FromSqlInterpolated($"SELECT * FROM dbo.orderbill");
                 bno =
                     null == bno || bno.Equals("")
-                        ? await _context.Orderbill.MaxAsync(p => p.billno)
+                        ? await _context.Orderbill!.MaxAsync(p => p.billno!)
                         : bno; //如果找到了最后，已经没有单据了，就又从头开始
             }
             else
             {
-                bno = await _context.Orderbill
+                bno = await _context.Orderbill!
                     .FromSqlInterpolated($"SELECT * FROM dbo.orderbill where billno>{billno}")
                     .AsNoTracking()
-                    .MinAsync(p => p.billno);
+                    .MinAsync(p => p.billno!);
                 bno =
                     null == bno || bno.Equals("")
-                        ? await _context.Orderbill.MinAsync(p => p.billno)
+                        ? await _context.Orderbill!.MinAsync(p => p.billno!)
                         : bno;
             }
-            Orderbill? odbill = await _context.Orderbill.FindAsync(bno);
-            _context.Entry(odbill).Reference("cust").Load(); //查询主单时，加载关联的外键表数据
-            _context.Entry(odbill).Collection(b => b.details).Load();
+            Orderbill? odbill = await _context.Orderbill!.FindAsync(bno);
+            _context.Entry(odbill!).Reference("cust").Load(); //查询主单时，加载关联的外键表数据
+            _context.Entry(odbill!).Collection(b => b.details!).Load();
             //var od = _context.Orderbill.FindAsync(odnum);
             //_context.Entry(od.Result).Collection(b => b.details).Load();
-            return odbill; //od.Result;
+            return odbill!; //od.Result;
         }
     }
 }

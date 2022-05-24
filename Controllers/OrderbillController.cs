@@ -42,7 +42,7 @@ namespace api6test.Controllers
         }
         [HttpDelete]
         public async Task<int> delOrder(Orderbill bill){
-            var rs=await _oser.DelOrder(bill.billno);
+            var rs=await _oser.DelOrder(bill!.billno!);
             return  rs; 
         }
 

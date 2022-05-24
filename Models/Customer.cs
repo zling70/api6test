@@ -11,8 +11,8 @@ namespace api6test.Models
     {
         public int  linenum {get;set;}
         [Key]  //标记主键列b       
-        public string customer {get; set;}
-        public string? custname {get; set;}
-        public string? custaddress {get; set;}         
+        public string customer {get; set;}=string.Empty;
+        public string custname {get; set;}="jarry";
+        public string custaddress {get; set;}="株洲";         
     }
 }

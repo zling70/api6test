@@ -24,14 +24,19 @@ namespace api6test.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
         {
-            return await _context.Customer.ToListAsync();
+            //严谨的逻辑是先执行空值的判断,zling,'!'操作符消除了空值检查
+            // if(!object.ReferenceEquals(_context,null)&&!object.ReferenceEquals(_context.Customer,null)){
+            //     return await _context!.Customer!.ToListAsync();
+            // }            
+            // return null;
+            return await _context.Customer!.ToListAsync();
         }
 
         // GET: api/Customer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(string id)
         {
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customer!.FindAsync(id);
 
             if (customer == null)
             {
@@ -77,7 +82,7 @@ namespace api6test.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            _context.Customer.Add(customer);
+            _context.Customer!.Add(customer);
             try
             {
                 await _context.SaveChangesAsync();
@@ -101,7 +106,7 @@ namespace api6test.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
         {
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customer!.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -115,7 +120,7 @@ namespace api6test.Controllers
 
         private bool CustomerExists(string id)
         {
-            return _context.Customer.Any(e => e.customer == id);
+            return _context.Customer!.Any(e => e.customer == id);
         }
     }
 }

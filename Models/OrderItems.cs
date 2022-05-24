@@ -21,9 +21,9 @@ namespace api6test.Models
         public string? unitof { get; set; } //varchar(20),--计量单位
         //[Column]
         //[DecimalPrecision(14,4)]
-        public decimal unitprice  { get; set; } //decimal(14,4),--单价
-        public decimal quantities { get; set; } //decimal(14,4),--数量
-        public decimal amounts { get; set; } //decimal(14,4),--总金额
+        public decimal? unitprice  { get; set; } //decimal(14,4),--单价
+        public decimal? quantities { get; set; } //decimal(14,4),--数量
+        public decimal? amounts { get; set; } //decimal(14,4),--总金额
         public string? specs { get; set; } //varchar(50),--规格型号
 
         //public Orderbill orderbill {get;set;}

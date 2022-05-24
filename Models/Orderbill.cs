@@ -8,12 +8,12 @@ namespace api6test.Models
     public class Orderbill
     {
         [Key]
-        public string billno {get;set;}        //单据编号
+        public string? billno {get;set;}        //单据编号
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]//似乎没有起到效果2021-08-27
         public DateTime billdate {get;set;}     //单据日期
         //public String customer {get;set;}       //客户编号关联的客户对象
-        public Customer cust {get;set;}
+        public Customer? cust {get;set;}
         public string? customeraddress {get;set;}      //客户地址
         //在简单案例后，扩展为一个复杂订单页面的crud，增加新的属性
         public string? billstatus {get;set;}//varchar(10),--单据审核状况
