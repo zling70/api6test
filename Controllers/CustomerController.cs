@@ -32,7 +32,7 @@ namespace api6test.Controllers
             return await _context.Customer!.ToListAsync();
         }
 
-        // GET: api/Customer/5
+        // GET: api/Customer/c01  //zling Customer的主键id为 customer=c01 这个字段
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(string id)
         {
@@ -46,8 +46,9 @@ namespace api6test.Controllers
             return customer;
         }
 
-        // PUT: api/Customer/5
+        // PUT: api/Customer/c01
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // zling 如何调用本方法，参考最下方部分的说明和代码
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomer(string id, Customer customer)
         {
@@ -74,7 +75,7 @@ namespace api6test.Controllers
                 }
             }
 
-            return NoContent();
+            return NoContent();//js客户端得到的是一个undefined值
         }
 
         // POST: api/Customer
@@ -102,7 +103,7 @@ namespace api6test.Controllers
             return CreatedAtAction("GetCustomer", new { id = customer.customer }, customer);
         }
 
-        // DELETE: api/Customer/5
+        // DELETE: api/Customer/c01
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
         {
@@ -124,3 +125,27 @@ namespace api6test.Controllers
         }
     }
 }
+
+//zling 关于客户端如何访问本api中的put请求
+//put请求方法中有两个参数客户id,及被修改的客户对象Customer实例
+//客户端ajax的PUT请求案例：
+// const getCustomer=function(){
+//     let cust={}
+//     const custid='c02'
+//     const customer=JSON.stringify({
+//         "linenum": 2,
+//         "customer": "c02",
+//         "custname": "关小羽",
+//         "custaddress": "湘潭"
+//         })
+//     $.ajax({
+//         url:'https://127.0.0.1:5001/api/Customer/'+custid,
+//         type:'PUT',
+//         datatype:'json',
+//         contentType:'application/json;charset=UTF-8',
+//         data:customer,
+//         success:function(res){
+//             console.log(res)  //输出undefined
+//         }
+//     })
+// }
