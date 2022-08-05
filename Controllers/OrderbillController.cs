@@ -60,14 +60,16 @@ namespace api6test.Controllers
             //这里想实现单条分页的查询操作，算法是：bill对象带一个参数，-1向前找，1向后找
             //string billno=bill.billno;
             Console.WriteLine("获得的请求参数是："+billno);
-            var res = await _oser.GetOrder(billno,1);
+            //var res = await _oser.GetOrder(billno,1);
+            var res = await _oser.GetOrder_efc(billno,1);
             return  res;
         }
 
          [HttpGet]
         public async Task<Orderbill> Prebill(string billno)
         {
-            var res = await _oser.GetOrder(billno,-1);
+            //var res = await _oser.GetOrder(billno,-1);
+            var res = await _oser.GetOrder_efc(billno,-1);
             return  res;
         }
     }

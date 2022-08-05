@@ -134,6 +134,9 @@ namespace api6test.BLL
                     .AsNoTracking()
                     .MaxAsync(p => p.billno!);
                 //var bills = _context.Orderbill.FromSqlInterpolated($"SELECT * FROM dbo.orderbill");
+                //zling 在EFCore的体系下执行原生SQL
+                //1.执行查询原生sql（FromSqlInterpolated）(关键词搜索可以找到用法)
+                //2.执行非查询sql（ExecuteSqlInterpolatedAsync）
                 bno =
                     null == bno || bno.Equals("")
                         ? await _context.Orderbill!.MaxAsync(p => p.billno!)
@@ -151,6 +154,38 @@ namespace api6test.BLL
                         : bno;
             }
             Orderbill? odbill = await _context.Orderbill!.FindAsync(bno);
+            _context.Entry(odbill!).Reference("cust").Load(); //查询主单时，加载关联的外键表数据
+            _context.Entry(odbill!).Collection(b => b.details!).Load();
+            //var od = _context.Orderbill.FindAsync(odnum);
+            //_context.Entry(od.Result).Collection(b => b.details).Load();
+            return odbill!; //od.Result;
+        }
+        public async Task<Orderbill> GetOrder_efc(string billno, int i = 1) //另一种实现方式，使用Linq而非sql
+        {
+            Orderbill? odbill = null;
+            
+            if (i >= 1)
+            {
+                odbill = await _context.Orderbill!.OrderBy(b=>b.billno).FirstOrDefaultAsync(b=>b.billno!.CompareTo(billno)>0);
+                if(null == odbill) {
+                    //zling 直接查询单号最小的单据，所报错误是 'DbSet<Orderbill>() .OrderBy(o => o.billno) .Min()' could not be translated
+                    //也就是不能翻译成sql语句，同学们可以自己另外实现这个功能（语法熟悉）
+                    //odbill = await _context.Orderbill!.OrderBy(b=>b.billno).MinAsync();//运行时报错的语句
+                    //否则，这里先执行查找最小单据号码，根据最小单据号码再执行单据查询，需要两次访问数据库，不是最优方案
+                    string? odb = await _context.Orderbill!.MinAsync(b=>b.billno);
+                    odbill =await _context.Orderbill!.OrderBy(b=>b.billno).FirstOrDefaultAsync(b=>b.billno!.Equals(odb));
+                }
+                   
+            }else{
+                odbill = await _context.Orderbill!.OrderByDescending(b=>b.billno).FirstOrDefaultAsync(b=>b.billno!.CompareTo(billno)<0);
+                if(null == odbill) {
+                    string? odb = await _context.Orderbill!.MaxAsync(b=>b.billno);
+                    odbill =await _context.Orderbill!.OrderBy(b=>b.billno).FirstOrDefaultAsync(b=>b.billno!.Equals(odb));
+                }                
+                   
+
+            }
+            //Orderbill? odbill = await _context.Orderbill!.FindAsync(bno);
             _context.Entry(odbill!).Reference("cust").Load(); //查询主单时，加载关联的外键表数据
             _context.Entry(odbill!).Collection(b => b.details!).Load();
             //var od = _context.Orderbill.FindAsync(odnum);
